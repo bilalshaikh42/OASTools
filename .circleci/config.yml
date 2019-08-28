@@ -18,6 +18,9 @@ jobs:
             coverage html
       - store_artifacts:
           path: htmlcov
+      - run:
+          name: Upload Coverage
+          command: bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports
 workflows:
   version: 2
   workflow:
