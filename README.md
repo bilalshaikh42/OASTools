@@ -1,5 +1,5 @@
 [![PyPI package](https://img.shields.io/pypi/v/oastools.svg)](https://pypi.python.org/pypi/oastools)
-[![PyPI Status](https://img.shields.io/pypi/status/datanator_rest_api.svg)](https://pypi.python.org/pypi/datanator_rest_api)
+[![PyPI Status](https://img.shields.io/pypi/status/oastools.svg)](https://pypi.python.org/pypi/oastools)
 [![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)]()
 [![Test results](https://circleci.com/gh/BilalShaikh42/oastools.svg?style=shield&circle-token=None)](https://circleci.com/gh/BilalShaikh42/oastools)
 [![Test coverage](https://codecov.io/gh/bilalshaikh42/oastools/branch/master/graph/badge.svg)](https://codecov.io/gh/bilalshaikh42/oastools)
