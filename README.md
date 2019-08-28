@@ -1,8 +1,8 @@
-[![PyPI package](https://img.shields.io/pypi/v/oastools.svg)](https://pypi.python.org/pypi/oastools) )
+[![PyPI package](https://img.shields.io/pypi/v/oastools.svg)](https://pypi.python.org/pypi/oastools)
 [![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)]()
 [![Test results](https://circleci.com/gh/BilalShaikh42/oastools.svg?style=shield&circle-token=None)](https://circleci.com/gh/BilalShaikh42/oastools)
 [![Test coverage](https://coveralls.io/repos/github/BilalShaikh42/oastools/badge.svg?t=None)](https://coveralls.io/github/BilalShaikh42/oastools)
-[![Code analysis](https://api.codeclimate.com/v1/badges/None/maintainability)](https://codeclimate.com/repos/None))
+[![Code analysis](https://api.codeclimate.com/v1/badges/None/maintainability)](https://codeclimate.com/repos/None)
 [![License](https://img.shields.io/github/license/BilalShaikh42/oastools.svg)](LICENSE)
 
 # oastools
