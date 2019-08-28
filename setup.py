@@ -23,7 +23,7 @@ md = pkg_utils.get_package_metadata(
 setuptools.setup(
     name=name,
     version=md.version,
-    description='',
+    description='A python package to provide tooling for the Open Api Specification',
     long_description=md.long_description,
     url="https://github.com/BilalShaikh42/" + name,
     download_url='https://github.com/BilalShaikh42/' + name,
