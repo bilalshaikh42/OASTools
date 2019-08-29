@@ -6,6 +6,7 @@ include oastools/VERSION
 
 # license
 include LICENSE
+include NOTICE.txt
 
 # requirements
 include requirements.txt

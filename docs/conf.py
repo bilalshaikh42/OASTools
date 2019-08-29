@@ -22,13 +22,10 @@ extensions = [
     'sphinx.ext.autosectionlabel',
     'sphinx.ext.coverage',
     'sphinx.ext.imgconverter',
-    'sphinx.ext.linkcode',
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
     'sphinx.ext.todo',
-    'sphinx_fontawesome',
     'sphinxcontrib.bibtex',
-    'sphinxcontrib.spelling',
     'sphinxprettysearchresults',
 ]
 
