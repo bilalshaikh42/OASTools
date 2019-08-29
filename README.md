@@ -28,7 +28,8 @@ pip install git+https://github.com/BilalShaikh42/oastools.git#egg=oastools[all]
 
 ## License
 
-The package is released under the [MIT license](LICENSE).
+The package is released under the [MIT license](LICENSE). The licence applies only to the portions of the software created in this projct. The project contains dependecies which have their own licene. See the [Notice](NOTICE.txt)
 
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fbilalshaikh42%2FOASTools.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fbilalshaikh42%2FOASTools?ref=badge_large)
+
