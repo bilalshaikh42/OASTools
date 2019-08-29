@@ -5,6 +5,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/5b7101c87030696e0ef8/maintainability)](https://codeclimate.com/github/bilalshaikh42/OASTools/maintainability)
 [![Documentation Status](https://readthedocs.org/projects/oastools/badge/?version=latest)](https://oastools.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/github/license/BilalShaikh42/oastools.svg)](LICENSE)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fbilalshaikh42%2FOASTools.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fbilalshaikh42%2FOASTools?ref=badge_shield)
 
 # oastools
 
@@ -28,3 +29,6 @@ pip install git+https://github.com/BilalShaikh42/oastools.git#egg=oastools[all]
 ## License
 
 The package is released under the [MIT license](LICENSE).
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fbilalshaikh42%2FOASTools.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fbilalshaikh42%2FOASTools?ref=badge_large)
