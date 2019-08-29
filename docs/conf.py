@@ -22,6 +22,7 @@ extensions = [
     'sphinx.ext.autosectionlabel',
     'sphinx.ext.coverage',
     'sphinx.ext.imgconverter',
+    'sphinx.ext.linkcode',
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
     'sphinx.ext.todo',
@@ -132,18 +133,18 @@ image_converter_args = [
 
 
 # -- linkcode options -----------------------------------------------------
-""" def linkcode_resolve(domain, info):
+def linkcode_resolve(domain, info):
     if domain != 'py':
         return None
     if not info['module']:
         return None
     rel_filename = info['module'].replace('.', '/')
     if os.path.isfile(os.path.join(os.path.dirname(__file__), '..', rel_filename + '.py')):
-        return "https://github.com/KarrLab/oastools/blob/master/{}.py".format(rel_filename)
+        return "https://github.com/bilalshaikh42/oastools/blob/master/{}.py".format(rel_filename)
     else:
-        return "https://github.com/KarrLab/oastools/blob/master/{}/__init__.py".format(rel_filename)
+        return "https://github.com/bilalshaikh42/oastools/blob/master/{}/__init__.py".format(rel_filename)
 
- """
+
 # -- napoleon options -----------------------------------------------------
 napoleon_google_docstring = True
 napoleon_numpy_docstring = False
