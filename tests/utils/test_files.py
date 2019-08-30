@@ -35,19 +35,3 @@ def test_get_file_type():
     for f in files[5]:
         with pytest.raises(ValueError):
             Files.__get_file_type(f)
-
-
-def test_parse_yaml():
-    assert(True)
-
-
-def test_parse_json():
-    assert(True)
-
-
-def test_serialize_yaml():
-    assert(True)
-
-
-def test_serialize_json():
-    assert(True)
