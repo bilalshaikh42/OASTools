@@ -2,3 +2,4 @@ cement >= 3.0.0 # for command line programs
 setuptools # for pkg_resources module
 pkg_utils
 pyyaml
+prance

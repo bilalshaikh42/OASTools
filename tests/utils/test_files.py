@@ -8,7 +8,7 @@ parsed_file = {'openapi': '3.0.2', 'info': {'title': 'API Title',
                'paths': {'/test': {'get': {'responses': {
                    '200': {'description': 'OK'}}}}}}
 
-file_base = "./tests/utils/fixtures/OpenAPI"
+file_base = "./tests/fixtures/OpenAPI"
 
 files = [file_base+".js", file_base+".json",
          file_base+".yaml", file_base+".yml", file_base+"doc", file_base+"bad"+".yml"]

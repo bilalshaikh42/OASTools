@@ -5,8 +5,10 @@
 :Copyright: 2019, Bilal Shaikh
 :License: MIT
 """
+from .. import utils
+import os.path
 
 
-class BaseParser(object):
-    def __init__(self, url=None, spec=None):
-        pass
+class OpenApiParser(object):
+    def __init__(self, path=None):
+        self.spec = utils.parse_file(path)
