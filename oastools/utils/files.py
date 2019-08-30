@@ -21,8 +21,6 @@ def parse_file(path):
             return __parse_json(spec_str)
         elif(type == FileType.YAML):
             return __parse_yaml(spec_str)
-        else:
-            raise ValueError("Unsupported File Type")
 
 
 def __get_file_type(path):
@@ -37,7 +35,8 @@ def __get_file_type(path):
     elif(path[js_ext:] == ".js" or path[json_ext:] == ".json"):
         return FileType.JSON
     else:
-        return FileType.UNKWN
+        raise ValueError("Unsupported File Type. File:" +
+                         path + " is not JSON or YAML")
 
 
 def __parse_yaml(spec_str):
