@@ -10,5 +10,5 @@ Contents
 
    installation.rst
    overview.rst
-   API documentation <source/modules.rst>
+   API documentation <modules/modules.rst>
    about.rst

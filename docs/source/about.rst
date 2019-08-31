@@ -7,7 +7,7 @@ License
 
 The software is released under the MIT license
 
-.. literalinclude:: ../LICENSE
+.. literalinclude:: ../../LICENSE
     :language: text
 
 
