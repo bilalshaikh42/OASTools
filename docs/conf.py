@@ -28,7 +28,7 @@ extensions = [
     'sphinx.ext.todo',
     'sphinxcontrib.bibtex',
     'sphinxprettysearchresults',
-    'sphinx-bootstrap-theme',
+    'sphinx_bootstrap_theme',
 
 ]
 
