@@ -3,4 +3,4 @@ sphinxcontrib_addmetahtml >= 0.1.1
 sphinxcontrib_bibtex
 sphinxcontrib_spelling
 sphinxprettysearchresults
-sphinx-bootstrap-theme
+sphinx_bootstrap_theme
