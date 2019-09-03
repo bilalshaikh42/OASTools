@@ -19,23 +19,32 @@ def main():
 #!BUG The option for reftype else send back whole file rather than part
 
 
+def __get_object_from_path(spec, path):
+    objs = path.split('/')
+    obj = spec
+    for path in objs:
+        obj = obj[path]
+    return obj
+
+
 def resolve(path):
     rootpath = "./oastools/resolve/fixtures/spec/"
     refType = path.find("#")
-    if (refType == -1):
+    if (refType == -1):  # remote file
         path = os.path.join(rootpath, path)
         ref = parse.OpenApiParser(path).spec
         return ref
-    elif(refType == 0):
+    elif(refType == 0):  # local refrence
         return path
-    else:
+    else:  # remote file with section specified
         print(path)
         path = path[0:refType]
         section = path[refType+1:]
         path = os.path.join(rootpath, path)
         print(path)
         fullRef = parse.OpenApiParser(path).spec
-        return fullRef
+        ref = __get_object_from_path(fullRef, section)
+        return ref
 
 
 def traverse(spec, callback=resolve):

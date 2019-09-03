@@ -1,5 +1,5 @@
 cement >= 3.0.0 # for command line programs
 setuptools # for pkg_resources module
-pkg_utils
-pyyaml
-prance
+pkg_utils #make packaging easier
+pyyaml # parse yaml  API definitions
+prance # replace later, currently used to parse API
