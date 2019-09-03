@@ -1,6 +1,17 @@
+import pytest
 import oastools.parse as parse
 
 
-def test_parser():
-    parsed = parse.OpenApiParser(path="./tests/fixtures/OpenAPI.yml")
-    assert(isinstance(parsed.spec, dict))
+@pytest.fixture
+def parser(path="./tests/fixtures/OpenAPI.yml"):
+    parser = parse.OpenApiParser(path=path)
+    return parser
+
+
+def test_parser(parser):
+    assert(isinstance(parser.spec, dict))
+    spec = parser.spec
+    assert(spec["info"]["title"] == "API Title")
+    assert(spec["openapi"] == "3.0.2")
+    assert(spec["paths"]["/test"]["get"] ==
+           {"responses": {"200": {"description": "OK"}}})
