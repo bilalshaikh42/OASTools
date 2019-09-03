@@ -13,11 +13,7 @@ def spec(path="./tests/fixtures/spec/root.yaml"):
 
 def test_traverse(spec):
     rootpath = os.path.abspath("./tests/fixtures/spec/")
-    print(spec)
-    print("+++++++++++++++++++++++=")
-    parsed = resolve.traverse(spec, rootpath)
-    print(parsed)
-    assert(False)
+    resolved = resolve.traverse(spec, rootpath)
 
 
 if __name__ == "__main__":
