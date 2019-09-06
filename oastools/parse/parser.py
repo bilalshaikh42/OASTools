@@ -30,7 +30,7 @@ class OASParser(object):
     def __init__(self, oas_spec, guess_schema=True):
 
         self._HTTP_VERBS = set(['get', 'put', 'post', 'delete',
-                           'options', 'head', 'patch'])
+                                'options', 'head', 'patch'])
 
         self.specification = deepcopy(oas_spec)
         self.guess = guess_schema
@@ -53,7 +53,7 @@ class OASParser(object):
                 self._add_parameters(path_parameters,
                                      path_spec['parameters'])
             for http_method in path_spec.keys():
-                
+
                 if http_method not in self._HTTP_VERBS:
                     continue
                 # Create a dictionary of operations for this specific path. Each operation is the http_method
@@ -65,6 +65,7 @@ class OASParser(object):
                 if 'operationId' in action.keys():
                     self.operation_from_ID[action['operationId']] = (
                         path, http_method, tag)
+                # Todo Use a Connexion compatible resolver to create the operation ID if one is not provided, Remove hashing
                 else:
                     # Note: the encoding chosen below isn't very important in this
                     #       case; what matters is a byte string that is unique.
@@ -89,7 +90,8 @@ class OASParser(object):
                     self.paths[path][http_method]['consumes'] = action['requestBody']['content']
 
     def _add_parameters(self, parameter_map, parameter_list):
-        """Populates the given parameter map with the list of parameters provided, resolving any reference objects encountered.
+        """ Populates the given parameter map with the list of parameters provided, resolving any reference objects encountered.
+            References are only resolved within the given spec, and not from other files or urls. Resolve external references before parsing.
         Args:
             parameter_map: mapping from parameter names to parameter objects
             parameter_list: list of either parameter objects or reference objects
@@ -117,103 +119,15 @@ class OASParser(object):
 if __name__ == "__main__":
     spec = utils.parse_file("./../../tests/fixtures/spec/DatanatorAPI.yaml")
     spec = OASParser(oas_spec=spec)
-    #print(spec.paths.keys())
-    #print(spec.operation_from_gen)
+    # print(spec.paths.keys())
+    # print(spec.operation_from_gen)
     for path in spec.paths:
-        #print(spec.paths[path])
+        # print(spec.paths[path])
         for http_method in spec.paths[path]:
             print(path)
             print(http_method)
-            print( spec.paths[path][http_method])
+            print(spec.paths[path][http_method])
             print("++++++++")
-        
-
-class SwaggerParser(object):
-    """Parse a swagger YAML file.
-    Get definitions examples, routes default data, and routes validator.
-    This only works with swagger 2.0.
-    Attributes:
-        specification: dict of the yaml file.
-        definitions_example: dict of definition with an example.
-        paths: dict of path with their actions, parameters, and responses.
-    """
-
-    _HTTP_VERBS=set(['get', 'put', 'post', 'delete',
-                       'options', 'head', 'patch'])
-
-    def __init__(self, swagger_path = None, swagger_dict = None, swagger_yaml = None, use_example = True):
-        """Run parsing from either a file or a dict.
-        Args:
-            swagger_path: path of the swagger file.
-            swagger_dict: swagger dict.
-            use_example: Define if we use the example from the YAML when we
-                         build definitions example (False value can be useful
-                         when making test. Problem can happen if set to True, eg
-                         POST {'id': 'example'}, GET /string => 404).
-        Raises:
-            - ValueError: if no swagger_path or swagger_dict is specified.
-                          Or if the given swagger is not valid.
-        """
-
-        # Run parsing
-        self.use_example=use_example
-        self.base_path=self.specification.get('basePath', '')
-        self.definitions_example={}
-        self.build_definitions_example()
-        self.paths={}
-        self.operation={}
-        self.generated_operation={}
-        self.get_paths_data()
-
-    def get_paths_data(self):
-        """Get data for each paths in the swagger specification.
-        Get also the list of operationId.
-        """
-        for path, path_spec in self.specification['paths'].items():
-            path=u'{0}{1}'.format(self.base_path, path)
-            self.paths[path]={}
-
-            # Add path-level parameters
-            default_parameters={}
-            if 'parameters' in path_spec:
-                self._add_parameters(default_parameters,
-                                     path_spec['parameters'])
-
-            for http_method in path_spec.keys():
-                if http_method not in self._HTTP_VERBS:
-                    continue
-
-                self.paths[path][http_method]={}
-
-                # Add to operation list
-                action=path_spec[http_method]
-                tag=action['tags'][0] if 'tags' in action.keys(
-                ) and action['tags'] else None
-                if 'operationId' in action.keys():
-                    self.operation[action['operationId']] = (
-                        path, http_method, tag)
-                else:
-                    # Note: the encoding chosen below isn't very important in this
-                    #       case; what matters is a byte string that is unique.
-                    #       URL paths and http methods should encode to UTF-8 safely.
-                    h = hashlib.sha256()
-                    h.update(
-                        ("{0}|{1}".format(http_method, path)).encode('utf-8'))
-                    self.generated_operation[h.hexdigest()] = (
-                        path, http_method, tag)
-
-                # Get parameters
-                self.paths[path][http_method]['parameters'] = default_parameters.copy()
-                if 'parameters' in action.keys():
-                    self._add_parameters(
-                        self.paths[path][http_method]['parameters'], action['parameters'])
-
-                # Get responses
-                self.paths[path][http_method]['responses'] = action['responses']
-
-                # Get mime types for this action
-                if 'consumes' in action.keys():
-                    self.paths[path][http_method]['consumes'] = action['consumes']
 
     def build_definitions_example(self):
         """Parse all definitions in the swagger specification."""
