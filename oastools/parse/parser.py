@@ -25,7 +25,14 @@ import yaml
 from copy import deepcopy
 from io import StringIO
 
+# Todo Adapt the tests that use this to use new one once OAS Parser is implemented
+class OpenApiParser(object):
+    def __init__(self, path=None):
+        self.spec = utils.parse_file(path)
 
+
+# Todo Remove this when tests are written
+# Test script for now
 if __name__ == "__main__":
     spec = utils.parse_file("./../../tests/fixtures/spec/DatanatorAPI.yaml")
     spec = OASParser(oas_spec=spec)
@@ -41,13 +48,13 @@ if __name__ == "__main__":
 
 
 class OASParser(object):
-    def __init__(self, oas_spec, guess_schema=True):
+    def __init__(self, oas_spec, use_example=True):
 
         self._HTTP_VERBS = set(['get', 'put', 'post', 'delete',
                                 'options', 'head', 'patch'])
 
         self.specification = deepcopy(oas_spec)
-        self.guess = guess_schema
+        self.use_example = use_example
         self.definitions_examples = {}
         self.build_definitions_example()
         self.paths = {}
@@ -55,6 +62,8 @@ class OASParser(object):
         self.operation_from_gen = {}
         self.servers = self.specification.get("servers")
         self.get_paths_data()
+        #TODO have this be set intelligently somehow from the servers
+        self.base_path="/"
 
     def get_paths_data(self):
         # go through each path (name of path ) and pathspec (the defined path)
@@ -949,56 +958,55 @@ class OASParser(object):
                                 spec['schema']['$ref'])
                             return self.definitions_example[definition_name]
 
+    def _validate_post_body(actual_request_body, body_specification):
+        """ returns a tuple (boolean, msg)
+            to indicate whether the validation passed
+            if False then msg contains the reason
+            if True then msg is empty
+        """
 
-def _validate_post_body(actual_request_body, body_specification):
-    """ returns a tuple (boolean, msg)
-        to indicate whether the validation passed
-        if False then msg contains the reason
-        if True then msg is empty
-    """
-
-    # If no body specified, return True (POST with empty body is allowed):
-    if "body" not in body_specification["parameters"]:
-        return True, ""
-
-    # Are there required parameters? - there is only ONE body, so we check that one
-    parameters_required = body_specification['parameters']['body']['required']
-
-    # What if it says 'required' but there is no schema ? - we reject it
-    schema_present = body_specification['parameters']['body'].get('schema')
-    if parameters_required and not schema_present:
-        msg = "there is no schema given, but it says there are required parameters"
-        return False, msg
-
-    # What is the mime type ?
-    text_is_accepted = any(
-        'text' in item for item in body_specification.get('consumes', []))
-    json_is_accepted = any(
-        'json' in item for item in body_specification.get('consumes', []))
-
-    if actual_request_body is '' and not text_is_accepted:
-        msg = "post body is an empty string, but text is not an accepted mime type"
-        return False, msg
-
-    if actual_request_body == {} and not json_is_accepted:
-        msg = "post body is an empty dict, but json is not an accepted mime type"
-        return False, msg
-
-    # If only json is accepted, but the body is a string, we transform the
-    # string to json and check it then (not sure if the server would accept
-    # that string, though)
-    if (json_is_accepted and not
-            text_is_accepted and
-            type(actual_request_body).__name__ == 'str'):
-        actual_request_body = json.loads(actual_request_body)
-
-    # Handle empty body
-    body_is_empty = actual_request_body in [None, '', {}]
-    if body_is_empty:
-        if parameters_required:
-            msg = "there is no body, but it says there are required parameters"
-            return False, msg
-        else:
+        # If no body specified, return True (POST with empty body is allowed):
+        if "body" not in body_specification["parameters"]:
             return True, ""
 
-    return True, ""
+        # Are there required parameters? - there is only ONE body, so we check that one
+        parameters_required = body_specification['parameters']['body']['required']
+
+        # What if it says 'required' but there is no schema ? - we reject it
+        schema_present = body_specification['parameters']['body'].get('schema')
+        if parameters_required and not schema_present:
+            msg = "there is no schema given, but it says there are required parameters"
+            return False, msg
+
+        # What is the mime type ?
+        text_is_accepted = any(
+            'text' in item for item in body_specification.get('consumes', []))
+        json_is_accepted = any(
+            'json' in item for item in body_specification.get('consumes', []))
+
+        if actual_request_body is '' and not text_is_accepted:
+            msg = "post body is an empty string, but text is not an accepted mime type"
+            return False, msg
+
+        if actual_request_body == {} and not json_is_accepted:
+            msg = "post body is an empty dict, but json is not an accepted mime type"
+            return False, msg
+
+        # If only json is accepted, but the body is a string, we transform the
+        # string to json and check it then (not sure if the server would accept
+        # that string, though)
+        if (json_is_accepted and not
+                text_is_accepted and
+                type(actual_request_body).__name__ == 'str'):
+            actual_request_body = json.loads(actual_request_body)
+
+        # Handle empty body
+        body_is_empty = actual_request_body in [None, '', {}]
+        if body_is_empty:
+            if parameters_required:
+                msg = "there is no body, but it says there are required parameters"
+                return False, msg
+            else:
+                return True, ""
+
+        return True, ""
