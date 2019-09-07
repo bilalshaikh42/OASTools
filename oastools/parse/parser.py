@@ -37,7 +37,7 @@ if __name__ == "__main__":
     spec = utils.parse_file("./../../tests/fixtures/spec/DatanatorAPI.yaml")
     spec = OASParser(oas_spec=spec)
     # print(spec.paths.keys())
-    # print(spec.operation_from_gen)
+    # print(spec.generated_operation)
     for path in spec.paths:
         # print(spec.paths[path])
         for http_method in spec.paths[path]:
@@ -58,8 +58,8 @@ class OASParser(object):
         self.definitions_examples = {}
         self.build_definitions_example()
         self.paths = {}
-        self.operation_from_ID = {}
-        self.operation_from_gen = {}
+        self.operation = {}
+        self.generated_operation = {}
         self.servers = self.specification.get("servers")
         self.get_paths_data()
         #TODO have this be set intelligently somehow from the servers
@@ -87,7 +87,7 @@ class OASParser(object):
                 tag = action['tags'][0] if 'tags' in action.keys(
                 ) and action['tags'] else None
                 if 'operationId' in action.keys():
-                    self.operation_from_ID[action['operationId']] = (
+                    self.operation[action['operationId']] = (
                         path, http_method, tag)
                 # Todo Use a Connexion compatible resolver to create the operation ID if one is not provided, Remove hashing
                 else:
@@ -97,7 +97,7 @@ class OASParser(object):
                     h = hashlib.sha256()
                     h.update(
                         ("{0}|{1}".format(http_method, path)).encode('utf-8'))
-                    self.operation_from_gen[h.hexdigest()] = (
+                    self.generated_operation[h.hexdigest()] = (
                         path, http_method, tag)
 
                 # Get parameters
