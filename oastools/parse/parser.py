@@ -26,6 +26,20 @@ from copy import deepcopy
 from io import StringIO
 
 
+if __name__ == "__main__":
+    spec = utils.parse_file("./../../tests/fixtures/spec/DatanatorAPI.yaml")
+    spec = OASParser(oas_spec=spec)
+    # print(spec.paths.keys())
+    # print(spec.operation_from_gen)
+    for path in spec.paths:
+        # print(spec.paths[path])
+        for http_method in spec.paths[path]:
+            print(path)
+            print(http_method)
+            print(spec.paths[path][http_method])
+            print("++++++++")
+
+
 class OASParser(object):
     def __init__(self, oas_spec, guess_schema=True):
 
@@ -35,6 +49,7 @@ class OASParser(object):
         self.specification = deepcopy(oas_spec)
         self.guess = guess_schema
         self.definitions_examples = {}
+        self.build_definitions_example()
         self.paths = {}
         self.operation_from_ID = {}
         self.operation_from_gen = {}
@@ -114,20 +129,6 @@ class OASParser(object):
         p = re.compile('#\/definitions\/(.*)')
         definition_name = re.sub(p, r'\1', ref)
         return definition_name
-
-
-if __name__ == "__main__":
-    spec = utils.parse_file("./../../tests/fixtures/spec/DatanatorAPI.yaml")
-    spec = OASParser(oas_spec=spec)
-    # print(spec.paths.keys())
-    # print(spec.operation_from_gen)
-    for path in spec.paths:
-        # print(spec.paths[path])
-        for http_method in spec.paths[path]:
-            print(path)
-            print(http_method)
-            print(spec.paths[path][http_method])
-            print("++++++++")
 
     def build_definitions_example(self):
         """Parse all definitions in the swagger specification."""
