@@ -76,6 +76,7 @@ def validate_definition(oas_parser, valid_response, response):
         return
 
     if valid_response == '' or valid_response is None:
+        print(response)
         assert response is None or response == ''
         return
 
@@ -199,14 +200,14 @@ def get_method_from_action(client, action):
     return client.__getattribute__(action)
 
 
-def swagger_test(swagger_yaml_path=None, app_url=None, authorize_error=None,
+def swagger_test(oas_spec=None, app_url=None, authorize_error=None,
                  wait_time_between_tests=0, use_example=True, dry_run=False,
                  extra_headers={}):
     """Test the given swagger api.
     Test with either a swagger.yaml path for a connexion app or with an API
     URL if you have a running API.
     Args:
-        swagger_yaml_path: path of your YAML swagger file.
+        oas_spec: path of your YAML swagger file.
         app_url: URL of the swagger api.
         authorize_error: dict containing the error you don't want to raise.
                          ex: {
@@ -222,7 +223,7 @@ def swagger_test(swagger_yaml_path=None, app_url=None, authorize_error=None,
     Raises:
         ValueError: In case you specify neither a swagger.yaml path or an app URL.
     """
-    for _ in swagger_test_yield(swagger_yaml_path=swagger_yaml_path,
+    for _ in swagger_test_yield(oas_spec=oas_spec,
                                 app_url=app_url,
                                 authorize_error=authorize_error,
                                 wait_time_between_tests=wait_time_between_tests,
@@ -232,14 +233,14 @@ def swagger_test(swagger_yaml_path=None, app_url=None, authorize_error=None,
         pass
 
 
-def swagger_test_yield(swagger_yaml_path=None, app_url=None, authorize_error=None,
+def swagger_test_yield(oas_spec=None, app_url=None, authorize_error=None,
                        wait_time_between_tests=0, use_example=True, dry_run=False,
                        extra_headers={}):
     """Test the given swagger api. Yield the action and operation done for each test.
     Test with either a swagger.yaml path for a connexion app or with an API
     URL if you have a running API.
     Args:
-        swagger_yaml_path: path of your YAML swagger file.
+        oas_spec: path of your YAML swagger file.
         app_url: URL of the swagger api.
         authorize_error: dict containing the error you don't want to raise.
                          ex: {
@@ -261,31 +262,31 @@ def swagger_test_yield(swagger_yaml_path=None, app_url=None, authorize_error=Non
         authorize_error = {}
 
     # Init test
-    if swagger_yaml_path is not None and app_url is not None:
+    if oas_spec is not None and app_url is not None:
         app_client = requests
         oas_parser = OASParser(
-            swagger_yaml_path, use_example=use_example)
-    elif swagger_yaml_path is not None:
-        specification_dir = os.path.dirname(
-            os.path.realpath(swagger_yaml_path))
+            oas_spec, use_example=use_example)
+    elif oas_spec is not None:
+        specification_dir = os.getcwd()
+
         app = connexion.App(__name__, port=8080, debug=True,
                             specification_dir=specification_dir)
-        app.add_api(os.path.basename(swagger_yaml_path))
+        app.add_api(oas_spec)
         app_client = app.app.test_client()
         oas_parser = OASParser(
-            swagger_yaml_path, use_example=use_example)
+            oas_spec, use_example=use_example)
     elif app_url is not None:
         app_client = requests
         remote_swagger_def = requests.get(
             u'{0}/swagger.json'.format(app_url)).json()
         oas_parser = OASParser(
-            swagger_dict=remote_swagger_def, use_example=use_example)
+            oas_spec=remote_swagger_def, use_example=use_example)
     else:
         raise ValueError(
             'You must either specify a swagger.yaml path or an app url')
 
     print("Starting testrun against {0} or {1} using examples: "
-          "{2}".format(swagger_yaml_path, app_url, use_example))
+          "{2}".format(oas_spec, app_url, use_example))
 
     operation_sorted = {method: [] for method in _HTTP_METHODS}
 
@@ -315,7 +316,7 @@ def swagger_test_yield(swagger_yaml_path=None, app_url=None, authorize_error=Non
             headers.extend([(key, value)
                             for key, value in extra_headers.items()])
 
-            if swagger_yaml_path is not None and app_url is None:
+            if oas_spec is not None and app_url is None:
                 if dry_run:
                     logger.info("\nWould send %s to %s with body %s and headers %s" %
                                 (action.upper(), url, body, headers))

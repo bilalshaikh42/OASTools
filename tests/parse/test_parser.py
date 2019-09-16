@@ -3,7 +3,7 @@ import oastools.parse as parse
 
 
 @pytest.fixture
-def parser(path="./tests/fixtures/OpenAPI.yml"):
+def parser(path="../fixtures/OpenAPI.yml"):
     parser = parse.OpenApiParser(path=path)
     return parser
 
@@ -16,3 +16,7 @@ def test_parser(parser):
     assert(spec["paths"]["/test"]["get"] ==
            {"responses": {"200": {"description": "OK"}}})
 
+
+def test_new_parser(parser):
+    spec = parse.OASParser(parser.spec)
+    print(spec.base_path)

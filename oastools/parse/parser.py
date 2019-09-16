@@ -26,6 +26,9 @@ from copy import deepcopy
 from io import StringIO
 
 # Todo Adapt the tests that use this to use new one once OAS Parser is implemented
+#! DO NOT REMOVE UNTILL TESTS ARE ADAPTED
+
+
 class OpenApiParser(object):
     def __init__(self, path=None):
         self.spec = utils.parse_file(path)
@@ -61,9 +64,9 @@ class OASParser(object):
         self.operation = {}
         self.generated_operation = {}
         self.servers = self.specification.get("servers")
+        # TODO have this be set intelligently somehow from the servers
+        self.base_path = " "
         self.get_paths_data()
-        #TODO have this be set intelligently somehow from the servers
-        self.base_path="/"
 
     def get_paths_data(self):
         # go through each path (name of path ) and pathspec (the defined path)
@@ -614,7 +617,7 @@ class OASParser(object):
         Get also the list of operationId.
         """
         for path, path_spec in self.specification['paths'].items():
-            path = u'{0}{1}'.format(self.base_path, path)
+            #path = u'{0}{1}'.format(self.base_path, path)
             self.paths[path] = {}
 
             # Add path-level parameters
