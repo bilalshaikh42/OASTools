@@ -918,8 +918,6 @@ class OASParser(object):
         # Get all status code
         if path_spec is not None and action in path_spec.keys():
             for status_code in path_spec[action]['responses'].keys():
-                print(status_code)
-                print(path_spec[action]['responses'][status_code])
                 resp = path_spec[action]['responses'][status_code]
                 try:
                     response[int(status_code)
