@@ -354,10 +354,14 @@ def swagger_test_yield(oas_spec=None, app_url=None, authorize_error=None,
                 # Get valid request and response body
                 body_req = oas_parser.get_send_request_correct_body(
                     path, action)
+                print("body_req")
+                print(body_req)
 
                 try:
                     response_spec = oas_parser.get_request_data(
                         path, action, body_req)
+                    print("response_spec")
+                    print(response_spec)
                 except (TypeError, ValueError) as exc:
                     logger.warning(
                         u'Error in the swagger file: {0}'.format(repr(exc)))

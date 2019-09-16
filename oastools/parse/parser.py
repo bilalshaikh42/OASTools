@@ -870,6 +870,13 @@ class OASParser(object):
     def get_response_example(self, resp_spec):
         """Get a response example from a response spec.
         """
+        #if resp_spec['content']['text/plain']:
+            #resp_spec = resp_spec['content']['text/plain']
+        if 'content' in resp_spec.keys():
+            if 'text/plain' in resp_spec['content'].keys():
+                resp_spec=resp_spec['content']['text/plain']
+            if 'application/json' in resp_spec.keys():
+                resp_spec=resp_spec['content']['application/json']
         if 'schema' in resp_spec.keys():
             if '$ref' in resp_spec['schema']:  # Standard definition
                 definition_name = self.get_definition_name_from_ref(
@@ -911,6 +918,8 @@ class OASParser(object):
         # Get all status code
         if path_spec is not None and action in path_spec.keys():
             for status_code in path_spec[action]['responses'].keys():
+                print(status_code)
+                print(path_spec[action]['responses'][status_code])
                 resp = path_spec[action]['responses'][status_code]
                 try:
                     response[int(status_code)
