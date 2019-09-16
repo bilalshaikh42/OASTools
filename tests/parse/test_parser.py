@@ -15,3 +15,4 @@ def test_parser(parser):
     assert(spec["openapi"] == "3.0.2")
     assert(spec["paths"]["/test"]["get"] ==
            {"responses": {"200": {"description": "OK"}}})
+

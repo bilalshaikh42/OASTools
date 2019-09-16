@@ -3,3 +3,4 @@ setuptools # for pkg_resources module
 pkg_utils #make packaging easier
 pyyaml # parse yaml  API definitions
 prance # replace later, currently used to parse API
+jinja2
