@@ -7,7 +7,7 @@ def test_tester():
 
     spec = utils.parse_file("./tests/fixtures/spec/DatanatorAPI.yaml")
     spec = test.swagger_test(
-        oas_spec=spec, app_url="http://0.0.0.0:8080")
+        oas_spec=spec, app_url="http://api2.datanator.info")
     # print(spec.paths.keys())
     # print(spec.generated_operation)
 
