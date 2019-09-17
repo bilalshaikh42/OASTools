@@ -1,0 +1,22 @@
+type: array
+items:
+  type: array
+  items:
+    type: object
+    required:
+      - version
+      - creation_date
+      - name
+      - inchi
+      - inchikey
+    properties:
+      version:
+        type: string
+      creation_date:
+        type: string
+      name:
+        type: string
+      inchi:
+        type: string
+      inchikey:
+        type: string

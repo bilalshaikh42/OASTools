@@ -13,12 +13,12 @@ info:
     email: info@karrlab.org
     url: https://datanator.info/
 servers:
-  - description: Local Host
-    url: http://localhost:8080/
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/bilalshaikh42/Datanator/1.0.0
-  - description: The public datanator server
-    url: http://api.datanator.info
+  - description: The default server
+    url: /
+  - description: The Datanator server
+    url: http://api2.datanator.info
+  - description: The Datanator test server
+    url: http://testapi.datanator.info
 tags:
   - name: Datanator
     description: Requests related to the database itself
@@ -32,24 +32,30 @@ tags:
     description: Requests for information on RNA abundance
 
 paths:
+  /:
+    $ref: paths/root.yaml
   /datanator/:
     $ref: paths/datanator.yaml
   /metabolites/:
     $ref: paths/metabolites.yaml#/root
   /metabolites/concentrations/:
     $ref: paths/metabolites.yaml#/concentrations
+  /metabolites/concentration/:
+    $ref: paths/metabolites.yaml#/concentration
   /proteins/precise_abundance/:
     $ref: paths/proteins.yaml#/precise_abundance
   /proteins/proximity_abundance/:
     $ref: paths/proteins.yaml#/proximity_abundance
-  /proteins/meta_combo:
-    $ref: paths/proteins.yaml#/meta_combo
-  /proteins/meta_single:
-    $ref: paths/proteins.yaml#/meta_single
+  /proteins/meta/meta_combo/:
+    $ref: paths/proteins.yaml#/meta/meta_combo
+  /proteins/meta/meta_single/:
+    $ref: paths/proteins.yaml#/meta/meta_single
 components:
   schemas:
     Metabolite:
-      $ref: ./schemas/metabolite.yaml
+      $ref: ./schemas/metabolites/metabolite.yaml
+    MetaboliteConcentration:
+      $ref: ./schemas/metabolites/metabolite_concentration.yaml
     Observation:
       $ref: ./schemas/observation.yaml
     Reaction:

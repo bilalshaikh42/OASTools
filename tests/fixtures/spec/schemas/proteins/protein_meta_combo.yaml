@@ -4,23 +4,17 @@ items:
   required:
     - uniprot_id
     - entry_name
-    - gene_name
     - protein_name
     - canonical_sequence
     - length
     - mass
-    - ec_number
-    - entrez_id
     - abundances
     - ncbi_taxonomy_id
-    - ordered_locus_name
     - species_name
   properties:
     uniprot_id:
       type: string
     entry_name:
-      type: string
-    gene_name:
       type: string
     protein_name:
       type: string
@@ -30,17 +24,11 @@ items:
       type: integer
     mass:
       type: string
-    ec_number:
-      type: string
-    entrez_id:
-      type: string
     abundances:
       type: array
       items:
         $ref: "./schemas/proteins/pax_abundance.yaml"
     ncbi_taxonomy_id:
       type: integer
-    ordered_locus_name:
-      type: string
     species_name:
       type: string

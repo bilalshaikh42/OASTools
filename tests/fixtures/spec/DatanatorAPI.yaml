@@ -13,12 +13,12 @@ info:
   title: Datanator API
   version: 1.0.0
 servers:
-  - description: Local Host
-    url: http://localhost:8080/
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/bilalshaikh42/Datanator/1.0.0
-  - description: The public datanator server
-    url: http://api.datanator.info
+  - description: The default server
+    url: /
+  - description: The Datanator server
+    url: http://api2.datanator.info
+  - description: The Datanator test server
+    url: http://testapi.datanator.info
 tags:
   - description: Requests related to the database itself
     name: Datanator
@@ -31,6 +31,21 @@ tags:
   - description: Requests for information on RNA abundance
     name: RNA
 paths:
+  /:
+    get:
+      responses:
+        "418":
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                type: object
+          description: I'm a teapot
+      summary: Pings the server to verfy connection
   /datanator/:
     get:
       responses:
@@ -89,12 +104,42 @@ paths:
           content:
             text/plain:
               schema:
-                type: string
                 example: test
+                type: string
           description: OK
       summary: Add a new metabolite
       tags:
         - Metabolites
+  /metabolites/concentration/:
+    get:
+      description: Some description
+      parameters:
+        - in: query
+          name: abstract
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: species
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: metabolite
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetaboliteConcentration"
+          description: OK
+      summary: Get metabolite concentration based on species and metabolite name
+      tags:
+        - Metabolites
+        - Concentration
   /metabolites/concentrations/:
     get:
       description:
@@ -142,7 +187,7 @@ paths:
           enum:
             - "True"
           type: string
-  /proteins/meta_combo:
+  /proteins/meta/meta_combo/:
     get:
       description: |-
         Get meta information for proteins,
@@ -185,7 +230,7 @@ paths:
       summary: Get meta information for proteins
       tags:
         - Proteins
-  /proteins/meta_single:
+  /proteins/meta/meta_single/:
     get:
       description: |-
         Get meta information for proteins,
@@ -202,6 +247,11 @@ paths:
           required: false
           schema:
             type: string
+        - in: query
+          name: ko
+          required: false
+          schema:
+            type: string
       responses:
         "200":
           content:
@@ -214,17 +264,22 @@ paths:
         - Proteins
   /proteins/precise_abundance/:
     get:
-      description:
-        If abundance value for the protein is not found, one can search
-        for proximity proteins
+      description: |-
+        If abundance value for the protein is not found, one can search for proximity proteins
+         using proximity_abundance
       parameters:
         - in: query
           name: uniprot_id
-          required: true
+          required: false
           schema:
             items:
               type: string
             type: array
+        - in: query
+          name: kegg_orthology
+          required: false
+          schema:
+            type: string
       responses:
         "200":
           content:
@@ -378,6 +433,29 @@ components:
         - inchi
         - name
       type: object
+    MetaboliteConcentration:
+      items:
+        items:
+          properties:
+            creation_date:
+              type: string
+            inchi:
+              type: string
+            inchikey:
+              type: string
+            name:
+              type: string
+            version:
+              type: string
+          required:
+            - version
+            - creation_date
+            - name
+            - inchi
+            - inchikey
+          type: object
+        type: array
+      type: array
     Observation:
       properties:
         error:
@@ -453,13 +531,7 @@ components:
             type: array
           canonical_sequence:
             type: string
-          ec_number:
-            type: string
-          entrez_id:
-            type: string
           entry_name:
-            type: string
-          gene_name:
             type: string
           length:
             type: integer
@@ -467,8 +539,6 @@ components:
             type: string
           ncbi_taxonomy_id:
             type: integer
-          ordered_locus_name:
-            type: string
           protein_name:
             type: string
           species_name:
@@ -478,16 +548,12 @@ components:
         required:
           - uniprot_id
           - entry_name
-          - gene_name
           - protein_name
           - canonical_sequence
           - length
           - mass
-          - ec_number
-          - entrez_id
           - abundances
           - ncbi_taxonomy_id
-          - ordered_locus_name
           - species_name
         type: object
       type: array
@@ -502,8 +568,8 @@ components:
             type: string
           uniprot_ids:
             items:
-              type: string
-            type: array
+              type: object
+            type: object
         required:
           - uniprot_ids
           - ko_name
