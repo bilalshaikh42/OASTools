@@ -65,6 +65,9 @@ def validate_definition(oas_parser, valid_response, response):
     """
     # additionalProperties do not match any definition because the keys
     # vary. we can only check the type of the values
+
+    if len(valid_response) == 1:
+        valid_response = valid_response[0]
     if 'any_prop1' in valid_response and 'any_prop2' in valid_response:
         assert oas_parser.validate_additional_properties(
             valid_response, response)

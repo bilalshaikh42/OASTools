@@ -39,7 +39,7 @@ class OpenApiParser(object):
 if __name__ == "__main__":
     spec = utils.parse_file("./../../tests/fixtures/spec/DatanatorAPI.yaml")
     spec = OASParser(oas_spec=spec)
-    # print(spec.paths.keys())
+    #(spec.paths.keys())
     # print(spec.generated_operation)
     for path in spec.paths:
         # print(spec.paths[path])
@@ -58,14 +58,14 @@ class OASParser(object):
 
         self.specification = deepcopy(oas_spec)
         self.use_example = use_example
-        self.definitions_examples = {}
+        self.definitions_example = {}
         self.build_definitions_example()
         self.paths = {}
         self.operation = {}
         self.generated_operation = {}
         self.servers = self.specification.get("servers")
-        # TODO have this be set intelligently somehow from the servers
-        self.base_path = " "
+        # TODO have this be set intelligently somehow from the servers param. Figure out what is being done with it in the tester
+        self.base_path = " " #! If this is changed there are errors. I dont know why TODO fix this
         self.get_paths_data()
 
     def get_paths_data(self):
@@ -138,13 +138,17 @@ class OASParser(object):
         Returns:
             The definition name corresponding to the ref.
         """
-        p = re.compile('#\/definitions\/(.*)')
+        p = re.compile('#\/components\/schemas\/(.*)')
         definition_name = re.sub(p, r'\1', ref)
         return definition_name
 
     def build_definitions_example(self):
         """Parse all definitions in the swagger specification."""
-        for def_name, def_spec in self.specification.get('definitions', {}).items():
+        try:
+            defintions= self.specification['components']['schemas']
+        except:
+            defintions={}
+        for def_name, def_spec in defintions.items():
             self.build_one_definition_example(def_name)
 
     def build_one_definition_example(self, def_name):
@@ -157,11 +161,11 @@ class OASParser(object):
         if def_name in self.definitions_example.keys():  # Already processed
             return True
         # Def does not exist
-        elif def_name not in self.specification['definitions'].keys():
+        elif def_name not in self.specification['components']['schemas'].keys():
             return False
 
         self.definitions_example[def_name] = {}
-        def_spec = self.specification['definitions'][def_name]
+        def_spec = self.specification['components']['schemas'][def_name]
 
         if def_spec.get('type') == 'array' and 'items' in def_spec:
             item = self.get_example_from_prop_spec(def_spec['items'])
@@ -242,6 +246,7 @@ class OASParser(object):
                 prop_spec)
             if additional_properties or from_allof:
                 return example
+            #? Why is this made into a list? It is causes errors downstream where the response is asserted to be a list if the example is a list
             return [example]
         # Array
         if prop_spec['type'] == 'array' or (isinstance(prop_spec['type'], list) and prop_spec['type'][0] == 'array'):
@@ -299,9 +304,11 @@ class OASParser(object):
                 # While get_example_from_prop_spec is supposed to return a list,
                 # we don't actually want that when recursing to build from
                 # properties
+
                 if isinstance(partial, list):
                     partial = partial[0]
                 example[inner_name] = partial
+
 
         return example, additional_property
 
@@ -486,7 +493,7 @@ class OASParser(object):
             If get_list is True, return a list of definition_name.
         """
         list_def_candidate = []
-        for definition_name in self.specification['definitions'].keys():
+        for definition_name in self.specification['components']['schemas'].keys():
             if self.validate_definition(definition_name, dict):
                 if not get_list:
                     return definition_name
@@ -552,13 +559,13 @@ class OASParser(object):
         Returns:
             True if the given dict match the definition, False otherwise.
         """
-        if (definition_name not in self.specification['definitions'].keys() and
+        if (definition_name not in self.specification['components']['schemas'].keys() and
                 definition is None):
             # reject unknown definition
             return False
 
         # Check all required in dict_to_test
-        spec_def = definition or self.specification['definitions'][definition_name]
+        spec_def = definition or self.specification['components']['schemas'][definition_name]
         all_required_keys_present = all(
             req in dict_to_test.keys() for req in spec_def.get('required', {}))
         if 'required' in spec_def and not all_required_keys_present:
@@ -683,7 +690,7 @@ class OASParser(object):
         Returns:
             The definition name corresponding to the ref.
         """
-        p = re.compile('#\/definitions\/(.*)')
+        p = re.compile('#\/components\/schemas\/(.*)')
         definition_name = re.sub(p, r'\1', ref)
         return definition_name
 
@@ -870,13 +877,18 @@ class OASParser(object):
     def get_response_example(self, resp_spec):
         """Get a response example from a response spec.
         """
+
         #if resp_spec['content']['text/plain']:
             #resp_spec = resp_spec['content']['text/plain']
+        #! Only works for one response type, based on order of content
         if 'content' in resp_spec.keys():
+            
             if 'text/plain' in resp_spec['content'].keys():
                 resp_spec=resp_spec['content']['text/plain']
-            if 'application/json' in resp_spec.keys():
+                ("Should not run")
+            elif 'application/json' in resp_spec['content'].keys():
                 resp_spec=resp_spec['content']['application/json']
+        
         if 'schema' in resp_spec.keys():
             if '$ref' in resp_spec['schema']:  # Standard definition
                 definition_name = self.get_definition_name_from_ref(
@@ -895,6 +907,7 @@ class OASParser(object):
                     else:
                         logging.warn("No item type in: " + resp_spec['schema'])
                         return ''
+                print(self.definitions_example)
                 return [self.definitions_example[definition_name]]
             elif 'type' in resp_spec['schema']:
                 return self.get_example_from_prop_spec(resp_spec['schema'])
